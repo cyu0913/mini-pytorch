@@ -82,3 +82,22 @@ class Value:
 
     def __neg__(self):
         return self * -1
+
+    def backward(self):
+        # topological order all of the children in the graph
+        topo = []
+        visited = set()
+        def build_topo(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build_topo(child)
+                topo.append(v)
+        build_topo(self)
+
+        self.grad = 1.0
+        for v in reversed(topo):
+            v._backward()
+
+
+    
