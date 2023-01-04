@@ -83,6 +83,13 @@ class Value:
     def __neg__(self):
         return self * -1
 
+    def relu(self):
+        output = Value(max(self.data, 0), (self,), 'ReLU')
+        def _backward():
+            self.grad += output.grad if self.data > 0.0 else 0.0
+        output._backward = _backward
+        return output
+
     def backward(self):
         # topological order all of the children in the graph
         topo = []
